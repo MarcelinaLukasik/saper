@@ -52,20 +52,19 @@ void Game::HandleEvents(int **grid, int **sgrid, int x, int y)
 
 void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::string timeAsText)
 {
-    
+    //TODO move to separate method, remove magic numbers
     sf::Font font;
     font.loadFromFile("SunnySpellsBasic.ttf");
     sf::Text text(timeAsText, font, 30);
     text.setPosition(app->getSize().x*0.45, app->getSize().y - text.getGlobalBounds().height - text.getGlobalBounds().top - 15);
     text.setFillColor(sf::Color::White);
 
-    // define a 120x50 rectangle
-    sf::RectangleShape rectangle(sf::Vector2f(200, 70));
-    // change the size to 100x100
-    rectangle.setSize(sf::Vector2f(app->getSize().x*0.80, 40));
-    rectangle.setPosition(app->getSize().x*0.08, app->getSize().y - rectangle.getGlobalBounds().height - rectangle.getGlobalBounds().top - 5);
-    sf::Color color(0, 0, 128);
-    rectangle.setFillColor(color);
+    sf::RectangleShape bottomBar(sf::Vector2f(200, 70));
+
+    bottomBar.setSize(sf::Vector2f(app->getSize().x*0.80, 40));
+    bottomBar.setPosition(app->getSize().x*0.08, app->getSize().y - bottomBar.getGlobalBounds().height - bottomBar.getGlobalBounds().top - 5);
+    sf::Color darkBlue(0, 0, 128);
+    bottomBar.setFillColor(darkBlue);
 
     for (int i=1;i<=10;i++)
          for (int j=1;j<=10;j++)
@@ -79,7 +78,7 @@ void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::
            app->draw(s);
            
           }
-    app->draw(rectangle);
+    app->draw(bottomBar);
     app->draw(text);
     app->display();
 }

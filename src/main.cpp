@@ -57,9 +57,9 @@ int main()
     while (game.CheckIfOpen())
     {
         
-        sf::Time elapsed = clock.getElapsedTime();
-        float timeElapsed =  elapsed.asSeconds();
-        std::string timeAsText = std::to_string(timeElapsed);
+        sf::Time elapsedTime = clock.getElapsedTime();
+        float timeInSeconds =  elapsedTime.asSeconds();
+        std::string timeAsText = std::to_string(timeInSeconds);
         std::string formatedTime = timeAsText.substr(0, timeAsText.length() - 5);
         Vector2i pos = game.GetMousePosition();
         int x = pos.x/game.w;
