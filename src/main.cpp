@@ -7,7 +7,17 @@ int main()
     srand(time(0));
     Game game;
 
+     while (game.menu.status == 0)
+     {
+          Vector2i pos = game.GetMousePosition();
+          int x = pos.x/game.w;
+          int y = pos.y/game.w;
+          game.menu.Display(game.app);
+          game.menu.HandleEvents(x,y, game.app, game.e);
+     }
 
+     if (game.menu.status == 3) game.app->close();
+  
    
     //TODO move creating arrays to separate method in game class
     int** grid { new int*[12] }; // allocate an array of 12 int pointers — these are our rows
@@ -30,7 +40,7 @@ int main()
      for (int j=1;j<=game.gridSize;j++)
       {
         sgrid[i][j]=game.startTile;
-        if (rand()%5==0)  grid[i][j]=9;
+        if (rand()%10==0)  grid[i][j]=9;
         else grid[i][j]=0;
       }
 
@@ -61,6 +71,7 @@ int main()
         float timeInSeconds =  elapsedTime.asSeconds();
         std::string timeAsText = std::to_string(timeInSeconds);
         std::string formatedTime = timeAsText.substr(0, timeAsText.length() - 5);
+
         Vector2i pos = game.GetMousePosition();
         int x = pos.x/game.w;
         int y = pos.y/game.w;
