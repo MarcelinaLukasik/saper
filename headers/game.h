@@ -1,15 +1,16 @@
 #include <SFML/Graphics.hpp>
+#include "menu.h"
 
 using namespace sf;
 
 class Game 
 {
     private:
-
     
     VideoMode videoMode;
-    Event e;
+    
     void InitWindow();
+    void InitMenu();
     
 
     public:
@@ -20,7 +21,9 @@ class Game
         void Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::string timeAsText);
         void DiscoverFields(int x, int y, int n, int **grid, int **sgrid, int i);
         RenderWindow* app;
+        Event e;
         const int gridSize = 10;
         const int startTile = 10;
         const int w=32;
+        Menu menu;
 };

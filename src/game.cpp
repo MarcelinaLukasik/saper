@@ -12,6 +12,7 @@ void Game::InitWindow()
     this->app = new sf::RenderWindow(videoMode, "Minesweeper!", sf::Style::Close);   
 }
 
+
 bool Game::CheckIfOpen()
 {
     return this->app->isOpen();
