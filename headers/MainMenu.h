@@ -2,11 +2,11 @@
 
 using namespace sf;
 
-class Menu 
+class MainMenu 
 {
     
     public:
-        Menu();
+        MainMenu();
         void HandleEvents(int x, int y, RenderWindow *app, Event e);
         void Display(RenderWindow *app);
         int status;

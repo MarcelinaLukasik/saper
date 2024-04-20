@@ -3,6 +3,8 @@
 Game::Game()
 {
     this->InitWindow();
+    menu = new MainMenu();
+    settings = new Settings();
 }
 
 void Game::InitWindow()
@@ -39,13 +41,13 @@ void Game::HandleEvents(int **grid, int **sgrid, int x, int y)
                   break;
 
               case Event::MouseButtonPressed:
-                  if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize)
+                  if (x >= 0 && x <= currentGridSize && y >= 0 && y <= currentGridSize)
                   {
                      if (e.key.code == Mouse::Left) 
                      {
                         if (grid[x][y] == 0) {                         
-                                int n,i =1;
-                                Game::DiscoverFields(x, y, n, grid, sgrid,i);  
+                                int n=1;
+                                Game::DiscoverFields(x, y, n, grid, sgrid);  
                         }
                         sgrid[x][y]=grid[x][y];
                      }
@@ -53,62 +55,69 @@ void Game::HandleEvents(int **grid, int **sgrid, int x, int y)
                      else if (e.key.code == Mouse::Right) sgrid[x][y]=11;
                   }
                  
-                  break;               
+                  break;  
+
+                   case Event::Resized:
+                    {
+                        // update the view to the new size of the window
+                        sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
+                        app->setView(sf::View(visibleArea));
+                    }             
             }
             
         }
         app->clear(Color::White);
 }
 
-void Game::DiscoverFields(int x, int y, int n, int **grid, int **sgrid, int i)
+void Game::DiscoverFields(int x, int y, int n, int **grid, int **sgrid)
 {
 
-    if (x+n <=10 && x+n >= 1 && grid[x+n][y]!=9 && sgrid[x+n][y] != grid[x+n][y]) 
+    if (x+n <currentGridSize && x+n >= 1 && grid[x+n][y]!=9 && sgrid[x+n][y] != grid[x+n][y]) 
     {
         sgrid[x+n][y] = grid[x+n][y];
-        if (grid[x+n][y] == 0) Game::DiscoverFields(x+n, y, n, grid, sgrid, i+1);
+        if (grid[x+n][y] == 0) Game::DiscoverFields(x+n, y, n, grid, sgrid);
     }
 
-    if (y+n <=10 && y+n >= 1 && grid[x][y+n]!=9 && sgrid[x][y+n] != grid[x][y+n]) 
+    if (y+n <currentGridSize && y+n >= 1 && grid[x][y+n]!=9 && sgrid[x][y+n] != grid[x][y+n]) 
     {
         sgrid[x][y+n] = grid[x][y+n];
-        if (grid[x][y+n] == 0) Game::DiscoverFields(x, y+n, n, grid, sgrid, i+1);
+        if (grid[x][y+n] == 0) Game::DiscoverFields(x, y+n, n, grid, sgrid);
     }
 
-    if (x-n <=10 && x-n >= 1 && grid[x-n][y]!=9 && sgrid[x-n][y] != grid[x-n][y]) 
+    if (x-n <currentGridSize && x-n >= 1 && grid[x-n][y]!=9 && sgrid[x-n][y] != grid[x-n][y]) 
     {
         sgrid[x-n][y] = grid[x-n][y];
-        if (grid[x-n][y] == 0) Game::DiscoverFields(x-n, y, n, grid, sgrid, i+1);
+        if (grid[x-n][y] == 0) Game::DiscoverFields(x-n, y, n, grid, sgrid);
     }
 
-     if (y-n <=10 && y-n >= 1 && grid[x][y-n]!=9 && sgrid[x][y-n] != grid[x][y-n]) 
+     if (y-n <currentGridSize && y-n >= 1 && grid[x][y-n]!=9 && sgrid[x][y-n] != grid[x][y-n]) 
     {
         sgrid[x][y-n] = grid[x][y-n];
-        if (grid[x][y-n] == 0) Game::DiscoverFields(x, y-n, n, grid, sgrid, i+1);
+        if (grid[x][y-n] == 0) Game::DiscoverFields(x, y-n, n, grid, sgrid);
     }
 
-     if (x+n <=10 && x+n >= 1 && y+n <=10 && y+n >= 1  && grid[x+n][y+n]!=9 && sgrid[x+n][y+n] != grid[x+n][y+n]) 
+     if (x+n <currentGridSize && x+n >= 1 && y+n <currentGridSize && y+n >= 1  && grid[x+n][y+n]!=9 && sgrid[x+n][y+n] != grid[x+n][y+n]) 
     {
         sgrid[x+n][y+n] = grid[x+n][y+n];
-        if (grid[x+n][y+n] == 0) Game::DiscoverFields(x+n, y+n, n, grid, sgrid, i+1);
+        if (grid[x+n][y+n] == 0) Game::DiscoverFields(x+n, y+n, n, grid, sgrid);
     }
 
-     if (x-n <=10 && x-n >= 1 && y-n <=10 && y-n >= 1 && grid[x-n][y-n]!=9 && sgrid[x-n][y-n] != grid[x-n][y-n]) 
+     if (x-n <currentGridSize && x-n >= 1 && y-n <currentGridSize && y-n >= 1 && grid[x-n][y-n]!=9 && sgrid[x-n][y-n] != grid[x-n][y-n]) 
     {
         sgrid[x-n][y-n] = grid[x-n][y-n];
-        if (grid[x-n][y-n] == 0) Game::DiscoverFields(x-n, y-n, n, grid, sgrid, i+1);
+        if (grid[x-n][y-n] == 0) Game::DiscoverFields(x-n, y-n, n, grid, sgrid);
     }
 
-      if (x-n <=10 && x-n >= 1 && y+n <=10 && y+n >= 1 && grid[x-n][y+n]!=9 && sgrid[x-n][y+n] != grid[x-n][y+n]) 
+      if (x-n <currentGridSize && x-n >= 1 && y+n <currentGridSize && y+n >= 1 && grid[x-n][y+n]!=9 && sgrid[x-n][y+n] != grid[x-n][y+n]) 
     {
         sgrid[x-n][y+n] = grid[x-n][y+n];
-        if (grid[x-n][y+n] == 0) Game::DiscoverFields(x-n, y+n, n, grid, sgrid, i+1);
+        if (grid[x-n][y+n] == 0) Game::DiscoverFields(x-n, y+n, n, grid, sgrid);
     }
 
-       if (x+n <=10 && x+n >= 1 && y-n <=10 && y-n >= 1 && grid[x+n][y-n]!=9 && sgrid[x+n][y-n] != grid[x+n][y-n]) 
+       if (x+n <currentGridSize && x+n >= 1 && y-n <currentGridSize && y-n >= 1 && grid[x+n][y-n]!=9 && sgrid[x+n][y-n] != grid[x+n][y-n]) 
     {
         sgrid[x+n][y-n] = grid[x+n][y-n];
-        if (grid[x+n][y-n] == 0) Game::DiscoverFields(x+n, y-n, n, grid, sgrid, i+1);
+        if (grid[x+n][y-n] == 0) Game::DiscoverFields(x+n, y-n, n, grid, sgrid);
     }
 
 
@@ -130,19 +139,35 @@ void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::
     sf::Color darkBlue(0, 0, 128);
     bottomBar.setFillColor(darkBlue);
 
-    for (int i=1;i<=10;i++)
-         for (int j=1;j<=10;j++)
+    for (int i=0;i<currentGridSize;i++)
+         for (int j=0;j<currentGridSize;j++)
           {
-              if (x >= 0 && x <= gridSize && y >= 0 && y <= gridSize)
+              if (x >= 0 && x < currentGridSize && y >= 0 && y < currentGridSize)
            {
               if (sgrid[x][y]==9) sgrid[i][j]=grid[i][j];
            }
            s.setTextureRect(IntRect(sgrid[i][j]*w,0,w,w));
-           s.setPosition(i*w, j*w);
+           s.setPosition((i+1)*w, (j+1)*w);
            app->draw(s);
            
           }
     app->draw(bottomBar);
     app->draw(text);
     app->display();
+}
+
+void Game::SetGridSize(int status)
+{
+        switch(status)
+        {
+            case 1:
+                currentGridSize = smallGridSize;
+                break;
+            case 2:
+                currentGridSize = mediumGridSize;
+                break;
+            case 3:
+                currentGridSize = largeGridSize;
+                break;
+        }
 }

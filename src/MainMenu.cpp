@@ -1,11 +1,11 @@
-#include "menu.h"
+#include "MainMenu.h"
 
-Menu::Menu()
+MainMenu::MainMenu()
 {
     status = 0;
 }
 
-void Menu::Display(RenderWindow *app)
+void MainMenu::Display(RenderWindow *app)
 {
     //TODO move to separate method, remove magic numbers
      sf::Color darkBlue(0, 0, 128);
@@ -50,7 +50,7 @@ void Menu::Display(RenderWindow *app)
     app->display();
 }
 
-void Menu::HandleEvents(int x, int y, RenderWindow *app, Event e)
+void MainMenu::HandleEvents(int x, int y, RenderWindow *app, Event e)
 {
      while (app->pollEvent(e))
         {
@@ -67,7 +67,7 @@ void Menu::HandleEvents(int x, int y, RenderWindow *app, Event e)
 
               case Event::MouseButtonPressed:
                
-                  if (x >= 1 && x <= 10 && y >= 2 && y <= 3)
+                  if (x >= 1 && x <= 10 && y >= 1 && y <= 2)
                   {
                      if (e.key.code == Mouse::Left) 
                      {
