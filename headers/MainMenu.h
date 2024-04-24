@@ -1,13 +1,23 @@
 #include <SFML/Graphics.hpp>
+#include "buttonFactory.h"
 
 using namespace sf;
 
-class MainMenu 
+class MainMenu : public ButtonFactory
 {
     
     public:
-        MainMenu();
+        MainMenu(RenderWindow *app);
         void HandleEvents(int x, int y, RenderWindow *app, Event e);
         void Display(RenderWindow *app);
-        int status;
+    
+        bool start;
+        bool inSettings;
+  
+        sf::Text startText;
+        sf::Text settingsText;
+        sf::Text quitText;
+        sf::RectangleShape startButton;
+        sf::RectangleShape settingsButton;
+        sf::RectangleShape quitButton;
 };
