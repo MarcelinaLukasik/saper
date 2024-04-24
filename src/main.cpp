@@ -14,7 +14,7 @@ int main()
           game.menu->Display(game.app);
           game.menu->HandleEvents(x,y, game.app, game.e);
           if (game.menu->start) break;
-          while (game.menu->inSettings)
+          while (game.menu->inSettings && game.CheckIfOpen())
           {
             game.settings->open = true;
             Vector2i pos = game.GetMousePosition();
@@ -50,13 +50,42 @@ int main()
     //////////////////////////////////
 
     // 9 is the index of bomb image
-    for (int i=0;i<game.settings->currentGridSize;i++)
-     for (int j=0;j<game.settings->currentGridSize;j++)
+    if (game.settings->isCustom)
+    {
+      int minesCounter;
+      while(minesCounter != game.settings->minesCount)
       {
-        sgrid[i][j]=game.startTile;
-        if (rand()%10==0)  grid[i][j]=9;
-        else grid[i][j]=0;
-      }
+        for (int i=0;i<game.settings->currentGridSize;i++)
+        {
+          for (int j=0;j<game.settings->currentGridSize;j++)
+          {      
+              sgrid[i][j]=game.startTile;
+              if (minesCounter != game.settings->minesCount)
+              {                 
+                if (rand()%7==0)
+                {
+                  grid[i][j]=9;
+                  minesCounter++;
+                }                 
+                else grid[i][j]=0;
+              }
+                
+          }       
+        }   
+      } 
+    }   
+    else
+    {
+      for (int i=0;i<game.settings->currentGridSize;i++)
+      for (int j=0;j<game.settings->currentGridSize;j++)
+        {
+          sgrid[i][j]=game.startTile;
+          if (rand()%7==0)  grid[i][j]=9;
+          else grid[i][j]=0;
+        }
+    }
+ 
+    
 
     for (int i=0;i<game.settings->currentGridSize;i++)
      for (int j=0;j<game.settings->currentGridSize;j++)
