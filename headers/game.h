@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "MainMenu.h"
 #include "settings.h"
 
@@ -23,10 +24,18 @@ class Game
         const int startTile = 10;    
         int bottomBarHeight = 40;
         const int w=32;
-        bool end;
+        bool over;
+        bool win;
+        int discoveredFields =0;
+        int fieldsToDiscover;
         std::string totalTime;
         sf::Time elapsedTime;
         MainMenu *menu;
         Settings *settings;
         VideoMode videoMode; 
+        float scale = 1.0f;
+        float scaleFactor = 0.0005f;
+        sf::SoundBuffer buffer;
+        sf::Sound sound;
+    
 };
