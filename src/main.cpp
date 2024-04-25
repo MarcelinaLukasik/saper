@@ -49,10 +49,12 @@ int main()
     Sprite s(t);
     //////////////////////////////////
 
+
+    int minesCounter;
     // 9 is the index of bomb image
     if (game.settings->isCustom)
     {
-      int minesCounter;
+      
       while(minesCounter != game.settings->minesCount)
       {
         for (int i=0;i<game.settings->currentGridSize;i++)
@@ -80,7 +82,11 @@ int main()
       for (int j=0;j<game.settings->currentGridSize;j++)
         {
           sgrid[i][j]=game.startTile;
-          if (rand()%7==0)  grid[i][j]=9;
+          if (rand()%7==0) 
+          {
+            minesCounter++;
+            grid[i][j]=9;
+          } 
           else grid[i][j]=0;
         }
     }
@@ -111,12 +117,12 @@ int main()
         grid[i][j]=n;
       }
    
-
+    game.fieldsToDiscover = game.settings->currentGridSize * game.settings->currentGridSize - minesCounter;
     sf::Clock clock;
 
     while (game.CheckIfOpen())
     {
-        if(!game.end)
+        if(!game.over && !game.win)
         {
           game.elapsedTime = clock.getElapsedTime();
         }
