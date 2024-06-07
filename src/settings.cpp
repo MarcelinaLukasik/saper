@@ -131,7 +131,7 @@ void Settings::HandleEvents(int x, int y, RenderWindow *app, Event e)
                         minesCount += 1;
                   }
 
-                if (x >= 3 && x <= 6 && y >= 9 && y <= 10)
+                if (x >= 4 && x <= 7 && y >= 10 && y <= 11)
                   {
                     if (e.key.code == Mouse::Left)
                         open = false;                       

@@ -1,12 +1,9 @@
 #include "game.h"
 #include <time.h>
 
-int main()
+void MainMenu(Game game)
 {
-    srand(time(0));
-    Game game;
-
-     while (game.CheckIfOpen())
+       while (game.CheckIfOpen())
      {
           Vector2i pos = game.GetMousePosition();
           int x = (pos.x/game.w);
@@ -30,27 +27,45 @@ int main()
               break;
             }
           }
+          while (game.menu->inHighscore && game.CheckIfOpen())
+          {
+            game.highscore->open = true;
+            Vector2i pos = game.GetMousePosition();
+            int x = (pos.x/game.w);
+            int y = (pos.y/game.w);
+
+            game.app->clear(Color::White);
+            game.highscore->ProcessScores(game.app);
+            game.app->display();
+            game.highscore->HandleEvents(x,y, game.app, game.e);
+            if (!game.highscore->open) 
+            {             
+              game.menu->inHighscore = false;
+              break;
+            }
+          }
      }
+}
+
+void Play(Game game)
+{
+    Texture t;
+    t.loadFromFile("/Users/mac/Desktop/projekty_2024/saper_projekt/src/images/tiles.jpg");
+    Sprite s(t);
     game.app->setSize(sf::Vector2u (game.settings->currentGridSize*game.w,game.settings->currentGridSize*game.w + game.bottomBarHeight));
    
-    //TODO move creating arrays to separate method in game class
-    int** grid { new int*[game.settings->currentGridSize] }; // allocate an array of 12 int pointers — these are our rows
+
+    int** grid { new int*[game.settings->currentGridSize] }; //  rows
     for (int count { 0 }; count < game.settings->currentGridSize; ++count)
-      grid[count] = new int[game.settings->currentGridSize]; // these are our columns
+      grid[count] = new int[game.settings->currentGridSize]; // columns
 
     int** sgrid { new int*[game.settings->currentGridSize] };
     for (int count { 0 }; count < game.settings->currentGridSize; ++count)
       sgrid[count] = new int[game.settings->currentGridSize];
-    //////////////////////////////////
-
-    //TODO move creating sprite to separate method in game class
-    Texture t;
-    t.loadFromFile("/Users/mac/Desktop/projekty_2024/saper_projekt/src/images/tiles.jpg");
-    Sprite s(t);
-    //////////////////////////////////
 
 
-    int minesCounter;
+
+    int minesCounter = 0;
     // 9 is the index of bomb image
     if (game.settings->isCustom)
     {
@@ -89,9 +104,7 @@ int main()
           } 
           else grid[i][j]=0;
         }
-    }
- 
-    
+    } 
 
     for (int i=0;i<game.settings->currentGridSize;i++)
      for (int j=0;j<game.settings->currentGridSize;j++)
@@ -126,26 +139,47 @@ int main()
         {
           game.elapsedTime = clock.getElapsedTime();
         }
+        if(game.inMenu)
+        {
+          game.menu->start = false;
+          break;
+        }
         
         float timeInSeconds =  game.elapsedTime.asSeconds();
         std::string timeAsText = std::to_string(timeInSeconds);
-        std::string formatedTime = timeAsText.substr(0, timeAsText.length() - 5);
+        game.formatedTime = timeAsText.substr(0, timeAsText.length() - 5);
         Vector2i pos = game.GetMousePosition();
         int x = (pos.x/game.w);
         int y = (pos.y/game.w);
 
         game.HandleEvents(grid, sgrid, x, y);        
-        game.Display(grid, sgrid, s, x, y, game.w, formatedTime);
+        game.Display(grid, sgrid, s, x, y, game.w, game.formatedTime);
     }
-    
-    // Deallocate memory
-    //TODO move to game class method
+
     for (int i = 0; i < game.settings->currentGridSize; ++i) {
         delete[] grid[i];
         delete[] sgrid[i];
     }
     delete[] grid;
     delete[] sgrid;
+    
+}
+
+
+int main()
+{
+    srand(time(0));
+    Game game;
+
+    while (game.CheckIfOpen())
+    {
+      if (!game.menu->start)
+        MainMenu(game);
+      else
+        Play(game);
+    } 
 
     return 0;
 }
+
+

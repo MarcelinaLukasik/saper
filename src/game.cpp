@@ -1,12 +1,16 @@
 #include "game.h"
+#include <string>
+#include<iostream>
 
 Game::Game()
 {
     this->InitWindow();
     menu = new MainMenu(this->app);
     settings = new Settings(this->app);
+    highscore = new Highscore(this->app);
     buffer.loadFromFile("explosionSound.wav");
     sound = sf::Sound(buffer);
+    playerInput.clear();
     
 }
 
@@ -41,6 +45,22 @@ void Game::HandleEvents(int **grid, int **sgrid, int x, int y)
                 case Event::KeyPressed:
                     if (e.key.code == Keyboard::Escape)
                     app->close();
+                    if (e.key.code == Keyboard::Enter && win)
+                    {
+                        highscore->Save(playerInput, formatedTime);
+                        inMenu = true;
+                        sf::FloatRect visibleArea(0, 0, 400, 400);
+                        app->setView(sf::View(visibleArea));
+                        app->setSize(sf::Vector2u(400,400)); 
+                    }
+                    if (e.key.code == Keyboard::Left)
+                    {
+                        inMenu = true;
+                        sf::FloatRect visibleArea(0, 0, 400, 400);
+                        app->setView(sf::View(visibleArea));
+                        app->setSize(sf::Vector2u(400,400)); 
+                    }
+
                     break;
 
                 case Event::MouseButtonPressed:
@@ -73,8 +93,25 @@ void Game::HandleEvents(int **grid, int **sgrid, int x, int y)
                 {
                     // update the view to the new size of the window
                     sf::FloatRect visibleArea(0, 0, e.size.width, e.size.height);
-                    app->setView(sf::View(visibleArea));
-                }             
+                    app->setView(sf::View(visibleArea)); 
+                    break;
+                }   
+                case Event::TextEntered:
+                {   
+                    if(win)
+                    {
+                        
+                        if(!playerInput.empty() && e.text.unicode == '\b')
+                        {
+                            playerInput.pop_back();
+                        }    
+                        else 
+                            playerInput += e.text.unicode;
+                    }
+                    break;                 
+                }  
+                
+                           
             }           
         }
         app->clear(Color::White);
@@ -141,7 +178,6 @@ void Game::DiscoverFields(int x, int y, int n, int **grid, int **sgrid)
 
 void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::string timeAsText)
 {
-    //TODO move to separate method, remove magic numbers
     sf::Font font;
     font.loadFromFile("SunnySpellsBasic.ttf"); 
     sf::Text text(timeAsText, font, 30);
@@ -149,11 +185,22 @@ void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::
     text.setFillColor(sf::Color::White);
       
     sf::RectangleShape bottomBar(sf::Vector2f(200, 70));
-    int bottomBarWidth = w*settings->currentGridSize-1;
+    int bottomBarWidth = w*settings->currentGridSize;
     bottomBar.setSize(sf::Vector2f(bottomBarWidth, bottomBarHeight));
     bottomBar.setPosition(app->getSize().x/2.f -bottomBarWidth/2, app->getSize().y - bottomBar.getGlobalBounds().height - bottomBar.getGlobalBounds().top - 5);
     sf::Color darkBlue(0, 0, 128);
     bottomBar.setFillColor(darkBlue);
+
+    sf::Text playerText(playerInput, font, 30);
+    playerText.setPosition(app->getSize().x*0.45, app->getSize().y - playerText.getGlobalBounds().height - playerText.getGlobalBounds().top - 50);
+    playerText.setFillColor(sf::Color::Black);
+
+    sf::RectangleShape scoreField(sf::Vector2f(200, 70));
+    int scoreFieldWidth = w*settings->currentGridSize;
+    scoreField.setSize(sf::Vector2f(scoreFieldWidth, 70));
+    scoreField.setPosition(app->getSize().x/2.f -scoreFieldWidth/2, app->getSize().y - scoreField.getGlobalBounds().height - scoreField.getGlobalBounds().top - 40);
+    scoreField.setFillColor(sf::Color::White);
+   
 
     for (int i=0;i<settings->currentGridSize;i++)
          for (int j=0;j<settings->currentGridSize;j++)
@@ -169,7 +216,7 @@ void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::
           }
 
     if (x >= 0 && x < settings->currentGridSize && y >= 0 && y < settings->currentGridSize)
-        if (sgrid[x][y]==9)
+        if (sgrid[x][y]==9 && !win)
             over = true;                   
     if (over == true)
     {
@@ -187,18 +234,28 @@ void Game::Display(int **grid, int **sgrid, Sprite s, int x, int y, int w, std::
     if (fieldsToDiscover == discoveredFields)
     {
         win = true;
+        sf::Text scoreHeaderText("Your name:", font, 25);
+        scoreHeaderText.setPosition(app->getSize().x*0.35, app->getSize().y - scoreHeaderText.getGlobalBounds().height - scoreHeaderText.getGlobalBounds().top - 80);
+        scoreHeaderText.setFillColor(sf::Color::Black);
         sf::Text gameEndText("YOU WIN", font, 50);
         gameEndText.setPosition(app->getSize().x/2 -50, app->getSize().y/2 - 100);
         gameEndText.setFillColor(sf::Color::Green);
         gameEndText.setOutlineColor(sf::Color::White);
         gameEndText.setOutlineThickness(5);
         gameEndText.setRotation(40);
+        
         if (scale < 1.5)
             scale += scaleFactor;
         gameEndText.setScale(scale, scale);
-        app->draw(gameEndText);
+        app->draw(gameEndText);      
+        app->draw(scoreField);
+        app->draw(scoreHeaderText);
+        app->draw(playerText);
     }
     app->draw(bottomBar);
+   
     app->draw(text);
     app->display();
 }
+
+

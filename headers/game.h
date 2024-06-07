@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include "MainMenu.h"
 #include "settings.h"
+#include "highscore.h"
 
 using namespace sf;
 
@@ -11,7 +12,6 @@ class Game
     void InitWindow();
     void InitMenu();
     
-
     public:
         Game();
         bool CheckIfOpen();
@@ -26,16 +26,20 @@ class Game
         const int w=32;
         bool over;
         bool win;
+        bool inMenu;
         int discoveredFields =0;
         int fieldsToDiscover;
-        std::string totalTime;
+        std::string formatedTime;
         sf::Time elapsedTime;
         MainMenu *menu;
         Settings *settings;
+        Highscore *highscore;
         VideoMode videoMode; 
         float scale = 1.0f;
         float scaleFactor = 0.0005f;
         sf::SoundBuffer buffer;
         sf::Sound sound;
-    
+        std::string playerInput;
+        sf::RectangleShape bottomBar;
+        
 };

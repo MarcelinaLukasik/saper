@@ -13,11 +13,14 @@ class MainMenu : public ButtonFactory
     
         bool start;
         bool inSettings;
+        bool inHighscore;
   
         sf::Text startText;
         sf::Text settingsText;
         sf::Text quitText;
+        sf::Text scoreText;
         sf::RectangleShape startButton;
         sf::RectangleShape settingsButton;
         sf::RectangleShape quitButton;
+        sf::RectangleShape scoreButton;
 };
